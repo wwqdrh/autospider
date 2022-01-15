@@ -3,6 +3,9 @@ name = "autospider"
 version = "0.1.0"
 description = ""
 authors = ["wwqdrh <huiloademail@163.com>"]
+packages = [
+    { include = "autospider" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"

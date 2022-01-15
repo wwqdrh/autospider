@@ -1,6 +1,7 @@
 from typing import Any, Tuple, Sequence, List
 
-from spider.action.base import BaseAction
+from autospider.types.action import IAction
+from autospider.action.base import BaseAction
 
 
 class IfAction(BaseAction):
@@ -10,7 +11,7 @@ class IfAction(BaseAction):
 class ForElementAction(BaseAction):
     def __init__(
         self,
-        child_actions: List["BaseAction"],
+        child_actions: List["IAction"],
         element: str,
         context_id: str = "",
     ) -> None:
@@ -22,6 +23,8 @@ class ForElementAction(BaseAction):
         count = await c.count()
         for i in range(count):
             cur = c.nth(i)
+            # print(await cur.inner_html())
+            # print(await cur.locator("div >> nth = 0").get_attribute("style"))
             await self.run_child(cur)
 
     async def stop(self):

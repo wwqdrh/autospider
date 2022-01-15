@@ -1,10 +1,12 @@
-from typing import List, Mapping, Any, MutableMapping, Optional
+from typing import List, Mapping, Any, MutableMapping, Optional, Type
 from weakref import WeakValueDictionary
 
 import yaml
-from spider.action.base import get_action
 
-from spider.types.action import IAction
+from autospider.action.base import get_action
+from autospider.types.action import IAction
+from autospider.action import control, flow
+
 
 
 class ActionTree:
@@ -30,11 +32,11 @@ class ActionTree:
         data = yaml.safe_load(ymlstr)
 
         def dfs(conf: List[dict]) -> List["IAction"]:
-            res = []
+            res: List["IAction"] = []
             for item in conf:
                 args = dict()
                 children = []
-                action_type: Optional["IAction"] = None
+                action_type: Optional[Type["IAction"]] = None
                 for key, value in item.items():
                     if key == "type":
                         action_type = get_action(value)
@@ -59,3 +61,4 @@ class ActionTree:
         for action in self._nodes:
             await action.run(None)
             await action.stop()
+

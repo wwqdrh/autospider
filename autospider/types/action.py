@@ -9,9 +9,18 @@ class IAction(Protocol):
     """
 
     context_id: str
-    child_action: List["IAction"]
+    child_actions: List["IAction"]
 
-    async def run(self, children_actions: List["IAction"]):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__()
+
+    def add_context(self, context_id: str, context: Any):
+        raise NotImplementedError
+
+    def get_context(self, context_id: str):
+        raise NotImplementedError
+
+    async def run(self, context: Any):
         """
         执行action命令 需要传入依赖的context
         """

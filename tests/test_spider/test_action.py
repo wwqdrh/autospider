@@ -1,52 +1,42 @@
 import pytest
 
-from spider.action import ActionTree
-from spider.action.control import OpenAction, GotoAction, ClickAction
-from spider.action.flow import ForElementAction
+from autospider.action import ActionTree
 
 
-OPEN_CLICK = """
+@pytest.mark.asyncio
+async def test_action_openclick():
+    await ActionTree.factory_ymlstr("""
 - type: open
   headless: false
   next:
     - type: goto
-      url: "https://wwqdrh.github.io/compass#/#Python"
+      url: "https://wwqdrh.github.io/mall.html#/"
       next:
         - type: forelement
-          element: '//*[@id="app"]/div/div[2]/div[1]/div[1]/ul/a'
+          element: '//*[@id="app"]/div/div/main/div/div[2]/div'
           next:
-            - type: click
-              element: '.'
-"""
+            - type: locator
+              element: 'div >> nth = 0'
+              next:
+                - type: attr
+                  name: 'style'
+                  next:
+                    - type: download
+""").start()
 
 
 @pytest.mark.asyncio
-async def test_ymlstr():
-    await ActionTree.factory_ymlstr(OPEN_CLICK).start()
-
-
-@pytest.mark.asyncio
-async def test_open_click():
-    await ActionTree.factory_nodes(
-        [
-            OpenAction(
-                "",
-                False,
-                GotoAction(
-                    "",
-                    "https://wwqdrh.github.io/compass#/#Python",
-                    ForElementAction(
-                        "",
-                        '//*[@id="app"]/div/div[2]/div[1]/div[1]/ul/a',
-                        ClickAction(
-                            "#click1",
-                            ".",
-                        ),
-                    ),
-                ),
-            )
-        ]
-    ).start()
-
-
-# //*[@id="app"]/div/div[2]/div[1]/div[1]/ul/a[4]
+async def test_action_getattr():
+   await ActionTree.factory_ymlstr("""
+- type: open
+  headless: false
+  next:
+    - type: goto
+      url: 'https://wwqdrh.github.io/mall.html#/'
+      next:
+        - type: locator
+          element: '//*[@id="app"]/div/div/main/div/div[2]/div[1]/div[1]'
+          next:
+            - type: attr
+              name: style
+   """).start()
