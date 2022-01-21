@@ -1,7 +1,15 @@
 import contextlib
+import pathlib
+import re
+import os
+import random
+import string
+import os.path
 from urllib.parse import urlparse
 from typing import Any, Tuple, List
+
 from playwright.async_api import async_playwright
+import httpx
 
 from autospider.action.base import BaseAction
 from autospider.types.action import IAction
@@ -109,14 +117,33 @@ class AttrAction(BaseAction):
         await self.run_child(c)
 
 
+class BackgroundUrlAction(BaseAction):
+    """
+    获取style中的backgroundurl值
+    """
+    P_BACKURL = r"background-image:\s?url\((.*)\).*?"
+
+    async def run(self, context: Any):
+        if context is None:
+            print("context为空")
+            return
+
+        c = await context.get_attribute("style")
+
+        if res := re.search(self.P_BACKURL, c):
+            url = res.group(1)[1:-1]
+            await self.run_child(url)
+
 class DownloadAction(BaseAction):
     """
     下载内容
 
     """
 
-    def __init__(self, child_actions: List["IAction"], context_id: str = "") -> None:
+    def __init__(self, child_actions: List["IAction"], path: str, context_id: str = "") -> None:
         super().__init__(child_actions, context_id)
+        self.path = path
+        os.makedirs(path, exist_ok=True)
 
     async def run(self, ctx: Any):
         if ctx is None:
@@ -126,6 +153,18 @@ class DownloadAction(BaseAction):
             url = self.get_context("domain") + ctx
         else:
             url = self.get_context("domain") + "/" + ctx
+        
+        *_, fileName = ctx.rpartition("/")
+        fileName = "".join(random.sample(string.ascii_letters, 6)) + fileName
 
-        print(url)
-        await self.run_child(None)
+        # 下载文件
+        async with httpx.AsyncClient() as client:
+            r = await client.get(url)
+            if r.status_code != 200:
+                print("下载图片错误")
+                return
+
+            with open(os.path.join(self.path, fileName), 'wb') as f:
+                f.write(r.content)
+
+        await self.run_child(self.path)
