@@ -5,7 +5,8 @@ from autospider.action import ActionTree
 
 @pytest.mark.asyncio
 async def test_action_openclick():
-    await ActionTree.factory_ymlstr("""
+    await ActionTree.factory_ymlstr(
+        """
 - type: open
   headless: false
   next:
@@ -22,12 +23,15 @@ async def test_action_openclick():
                   name: 'style'
                   next:
                     - type: download
-""").start()
+                      path: './pic'
+"""
+    ).start()
 
 
 @pytest.mark.asyncio
 async def test_action_downonebg():
-   await ActionTree.factory_ymlstr("""
+    await ActionTree.factory_ymlstr(
+        """
 - type: open
   headless: false
   next:
@@ -41,12 +45,14 @@ async def test_action_downonebg():
               next:
                 - type: download
                   path: './pic'
-   """).start()
+   """
+    ).start()
 
 
 @pytest.mark.asyncio
 async def test_action_downiterbg():
-   await ActionTree.factory_ymlstr("""
+    await ActionTree.factory_ymlstr(
+        """
 - type: open
   headless: false
   next:
@@ -63,4 +69,24 @@ async def test_action_downiterbg():
                   next:
                     - type: download
                       path: './pic'
-   """).start()
+   """
+    ).start()
+
+
+@pytest.mark.asyncio
+async def test_num_for():
+    await ActionTree.factory_ymlstr(
+        """
+- type: open
+  headless: false
+  next:
+    - type: goto
+      url: 'https://wwqdrh.github.io/mall.html#/detail/1'
+      next:
+        - type: numfor
+          nums: 3
+          next:
+            - type: click
+              element: '//*[@id="app"]/div/div/main/div/div[2]/div[1]/div/span[2]/i'
+   """
+    ).start()

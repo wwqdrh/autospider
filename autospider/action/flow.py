@@ -8,6 +8,16 @@ class IfAction(BaseAction):
     pass
 
 
+class ElementAction(BaseAction):
+    def __init__(self, child_actions: List["IAction"], element: str, context_id: str = "") -> None:
+        super().__init__(child_actions, context_id)
+        self._element = element
+    
+    async def run(self, context: Any):
+        page = self.get_context("page")
+        c = page.locator(self._element)
+        self.run_child(c)
+
 class ForElementAction(BaseAction):
     def __init__(
         self,
@@ -29,3 +39,15 @@ class ForElementAction(BaseAction):
 
     async def stop(self):
         pass
+
+
+class NumForAction(BaseAction):
+    def __init__(
+        self, child_actions: List["IAction"], nums: int, context_id: str = ""
+    ) -> None:
+        super().__init__(child_actions, context_id)
+        self._nums = nums
+
+    async def run(self, context: Any):
+        for _ in range(self._nums):
+            await self.run_child(context)

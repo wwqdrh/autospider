@@ -58,13 +58,15 @@ class GotoAction(BaseAction):
 
     async def run(self, context: Any):
         """
-        需要注册当前的路由
+        注册当前的路由
+        注册当前的rootpage
         """
         url = urlparse(self._url)
         self.add_context("domain", url.scheme + "://" + url.netloc)
 
         c = await context.new_page()
         await c.goto(self._url)
+        self.add_context("page", c)
 
         await self.run_child(c)
 
@@ -81,7 +83,7 @@ class ClickAction(BaseAction):
         self._element = element
 
     async def run(self, context: Any):
-        c = await context.click()
+        c = await context.click(self._element)
         await self.run_child(c)
 
 
