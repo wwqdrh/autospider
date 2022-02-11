@@ -41,6 +41,9 @@ class BaseAction:
             await child.stop()
 
     def add_context(self, context_id: str, context: Any):
+        """
+        page: 全局的locator对象
+        """
         set_context(context_id, context)
 
     def get_context(self, context_id: str):

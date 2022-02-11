@@ -90,3 +90,89 @@ async def test_num_for():
               element: '//*[@id="app"]/div/div/main/div/div[2]/div[1]/div/span[2]/i'
    """
     ).start()
+
+
+@pytest.mark.asyncio
+async def test_pic_down():
+    await ActionTree.factory_ymlstr(
+        """
+- type: open
+  proxy: '127.0.0.1:7890'
+  headless: false
+  next:
+    - type: goto
+      url: "https://www.xsnvshen.com/album/37664"
+      next:
+        - type: click
+          element: '//*[@id="showlists"]'
+        - type: forelement
+          element: '//html/body/div[4]/div/div[4]/ul/li'
+          next:
+            - type: locator
+              element: 'div img'
+              next:
+                - type: downpic
+    """
+    ).start()
+
+
+@pytest.mark.asyncio
+async def test_pic_down_2():
+    await ActionTree.factory_ymlstr(
+        """
+- type: open
+  headless: false
+  next:
+    - type: numrange
+      start: 36
+      end: 36
+      build: "https://img.f2mm.com/gallery3/20220110/25266/{}.jpg"
+      next:
+        - type: download
+          path: './pic'
+          proxy: "http://127.0.0.1:7890"
+          https: true
+    """
+    ).start()
+
+
+@pytest.mark.asyncio
+async def test_pic_down_3():
+    await ActionTree.factory_ymlstr(
+        """
+- type: open
+  headless: false
+  next:
+    - type: numrange
+      start: 23
+      end: 79
+      build: "https://i.nshens.com/storage/image2/xiuren/no.4341/8cc9a7526c3f048e235bad1c0577cdd8/{}.jpg"
+      next:
+        - type: download
+          path: './pic'
+          proxy: "http://127.0.0.1:7890"
+          https: true
+    """
+    ).start()
+
+
+@pytest.mark.asyncio
+async def test_pic_down_4():
+    await ActionTree.factory_ymlstr(
+        """
+- type: open
+  headless: false
+  next:
+    - type: numrange
+      start: 0
+      end: 61
+      fill: 3
+      build: "https://img.xsnvshen.com/album/22162/36367/{}.jpg"
+      next:
+        - type: download
+          path: './pic'
+          proxy: "http://127.0.0.1:7890"
+          https: true
+          wait: 2
+    """
+    ).start()

@@ -5,8 +5,7 @@ import yaml
 
 from autospider.action.base import get_action
 from autospider.types.action import IAction
-from autospider.action import control, flow
-
+from autospider.action import control, flow, element
 
 
 class ActionTree:
@@ -26,6 +25,11 @@ class ActionTree:
         递归将每个action转为actionnode
         """
         return cls(nodes)
+
+    @classmethod
+    def factory_ymlpath(cls, ymlpath: str) -> "ActionTree":
+        with open(ymlpath, mode="r", encoding="utf8") as f:
+            return cls.factory_ymlstr(f.read())
 
     @classmethod
     def factory_ymlstr(cls, ymlstr: str) -> "ActionTree":
@@ -48,7 +52,6 @@ class ActionTree:
                     res.append(action_type(child_actions=children, **args))
             return res
 
-        
         return cls(dfs(data))
 
     def add_context_mapping(self, key: str, value: Any):
@@ -61,4 +64,3 @@ class ActionTree:
         for action in self._nodes:
             await action.run(None)
             await action.stop()
-
