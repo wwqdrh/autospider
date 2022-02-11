@@ -11,6 +11,7 @@ async def test_action_ecapi():
         """
 - type: open
   headless: false
+  out: 'result.txt'
   next:
     - type: goto
       url: "https://open.eccang.com/#/DocumentCenter"

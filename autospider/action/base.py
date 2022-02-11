@@ -1,8 +1,12 @@
 from typing import Dict, List, Optional, Protocol, Sequence, Any, MutableMapping, Type
+import io
+import atexit
 
 from autospider.types.action import IAction
 
 
+_out = ""
+_out_buf = io.StringIO()
 _action_mapping: Dict[str, Type["IAction"]] = dict()
 _context_mapping: Dict[str, Any] = dict()
 
@@ -21,6 +25,30 @@ def set_context(context_id: str, context: Any):
 
 def get_context(context_id: str):
     return _context_mapping[context_id]
+
+
+def set_out(out: str):
+    global _out
+    _out = out
+
+
+@atexit.register
+def exit():
+    print("执行退出")
+    if _out != "":
+        print("输出到文件中")
+        with open(_out, mode="w+", encoding="utf8") as f:
+            f.write(_out_buf.getvalue())
+        _out_buf.close()
+
+    print("OpenAction退出中...")
+
+
+def get_out(word):
+    if _out == "":
+        print(word)
+
+    _out_buf.write(word)
 
 
 class BaseAction:
@@ -57,3 +85,11 @@ class BaseAction:
 
     async def stop(self):
         pass
+
+        # 打印输出
+
+    def set_out(self, out: str):
+        set_out(out)
+
+    async def out(self, word: str):
+        get_out(word + "\n")

@@ -1,5 +1,6 @@
 import contextlib
 from email import header
+import io
 import pathlib
 import re
 import os
@@ -25,16 +26,18 @@ class OpenAction(BaseAction):
     def __init__(
         self,
         child_actions: List["IAction"],
+        out: str = "",
         proxy: str = None,
         headless: bool = False,
         context_id: str = "",
     ) -> None:
         super().__init__(child_actions, context_id)
         self._browser_context: Any = None
-
         self._proxy = proxy
         self._headless = headless
         self._browser = async_playwright()
+
+        self.set_out(out)
 
     async def run(self, context: Any):
         self._browser_context = await self._browser.start()
@@ -57,6 +60,11 @@ class OpenAction(BaseAction):
         await self.run_child(context)
 
     async def stop(self):
+        if self._out != "":
+            print("输出到文件中")
+            with open(self._out, mode="w+", encoding="utf8") as f:
+                f.write(self._out_buf.read())
+
         print("OpenAction退出中...")
         await self._browser.__aexit__()
 

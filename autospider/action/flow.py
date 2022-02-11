@@ -120,16 +120,27 @@ class SleepAction(BaseAction):
 
 class PrintAction(BaseAction):
     def __init__(
-        self, child_actions: List["IAction"], text: str = "", context_id: str = ""
+        self,
+        child_actions: List["IAction"],
+        text: str = "",
+        console: bool = False,
+        context_id: str = "",
     ) -> None:
         super().__init__(child_actions, context_id)
         self._text = text
+        self._console = console
 
     async def run(self, context: Any):
         if self._text != "":
-            print(self._text)
+            if self._console:
+                print(self._text)
+            else:
+                await self.out(self._text)
         else:
-            print(context)
+            if self._console:
+                print(context)
+            else:
+                await self.out(context)
 
         await self.run_child(context)
 
