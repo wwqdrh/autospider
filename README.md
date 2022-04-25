@@ -18,3 +18,7 @@ OPEN_CLICK = """
 
 await ActionTree.factory_ymlstr(OPEN_CLICK).start()
 ```
+
+# 如何使用
+
+包安装好之后需要执行 `playwright install`, 安装playwright所需要的chromium

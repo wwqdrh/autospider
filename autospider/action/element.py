@@ -2,7 +2,7 @@
 from typing import Any
 import re
 
-from autospider.action.base import BaseAction
+from autospider.context import BaseAction
 
 
 class TextAction(BaseAction):

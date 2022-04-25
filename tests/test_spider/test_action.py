@@ -1,6 +1,6 @@
 import pytest
 
-from autospider.action import ActionTree
+from autospider import ActionTree
 
 
 @pytest.mark.asyncio

@@ -5,7 +5,7 @@ import random, string
 from playwright.async_api import TimeoutError
 
 from autospider.types.action import IAction
-from autospider.action.base import BaseAction
+from autospider.context import BaseAction
 
 
 class IfAction(BaseAction):

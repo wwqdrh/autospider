@@ -14,7 +14,7 @@ from typing import Any, Tuple, List
 from playwright.async_api import async_playwright
 import httpx
 
-from autospider.action.base import BaseAction
+from autospider.context import BaseAction
 from autospider.types.action import IAction
 
 
