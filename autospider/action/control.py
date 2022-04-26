@@ -251,13 +251,40 @@ class DownloadAction(BaseAction):
             f.write(r.content)
 
         await self.run_child(self.path)
-        # async with httpx.AsyncClient(proxies=self._proxy, verify=False) as client:
-        #     r = await client.get(url)
-        #     if r.status_code != 200:
-        #         print("下载图片错误")
-        #         return
 
-        #     with open(os.path.join(self.path, fileName), "wb") as f:
-        #         f.write(r.content)
 
-        # await self.run_child(self.path)
+class JSScriptAction(BaseAction):
+    """
+    >>> import asyncio
+    >>> import subprocess
+    >>> from autospider import ActionTree
+    >>> subprocess.run(["echo", "window.navigator.language;", ">", "tmp.js"])  
+    >>> async def main():
+    ...     await ActionTree.factory_ymlstr(
+    ... \"\"\"
+    ... - type: open
+    ...   headless: false
+    ...   next:
+    ...     - type: goto
+    ...       url: \"https://wwqdrh.github.io/mall.html#/\"
+    ...       next:
+    ...         - type: jsscript
+    ...           script: "tmp.js"
+    ... \"\"\"
+    ...     ).start()
+    >>> asyncio.run(main())
+    >>> subprocess.run(["rm", "-rf", "tmp.js"]) 
+    """
+    def __init__(
+        self, child_actions: List["IAction"], script: str = "", context_id: str = ""
+    ) -> None:
+        super().__init__(child_actions, context_id)
+        self._script = script
+
+    async def run(self, ctx: Any):
+        # 执行js脚本
+        with open(self._script, mode="r", encoding="utf8") as f:
+            page = self.get_context("page")
+            await page.evaluate(f.read())
+
+        await self.run_child(ctx)

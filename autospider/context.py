@@ -34,14 +34,14 @@ def set_out(out: str):
 
 @atexit.register
 def exit():
-    print("执行退出")
+    # print("执行退出")
     if _out != "":
         print("输出到文件中")
         with open(_out, mode="w+", encoding="utf8") as f:
             f.write(_out_buf.getvalue())
         _out_buf.close()
 
-    print("OpenAction退出中...")
+    # print("OpenAction退出中...")
 
 
 def get_out(word):
