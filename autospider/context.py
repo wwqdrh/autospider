@@ -32,6 +32,17 @@ def set_out(out: str):
     _out = out
 
 
+def get_out_str() -> str:
+    return _out
+
+
+def get_out(word):
+    if _out == "":
+        print(word)
+
+    _out_buf.write(word)
+
+
 @atexit.register
 def exit():
     # print("执行退出")
@@ -42,13 +53,6 @@ def exit():
         _out_buf.close()
 
     # print("OpenAction退出中...")
-
-
-def get_out(word):
-    if _out == "":
-        print(word)
-
-    _out_buf.write(word)
 
 
 class BaseAction:
@@ -90,6 +94,9 @@ class BaseAction:
 
     def set_out(self, out: str):
         set_out(out)
+
+    def get_out(self) -> str:
+        return get_out_str()
 
     async def out(self, word: str):
         get_out(word + "\n")

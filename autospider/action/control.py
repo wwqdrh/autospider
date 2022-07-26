@@ -60,7 +60,7 @@ class OpenAction(BaseAction):
         await self.run_child(context)
 
     async def stop(self):
-        if self._out != "":
+        if self.get_out() != "":
             print("输出到文件中")
             with open(self._out, mode="w+", encoding="utf8") as f:
                 f.write(self._out_buf.read())
@@ -114,7 +114,10 @@ class LocatorAction(BaseAction):
         self._element = element
 
     async def run(self, context: Any):
+        await asyncio.sleep(1)
+        print(await context.inner_html())
         c = context.locator(self._element)
+        print(await c.inner_html())
         await self.run_child(c)
 
 
@@ -134,6 +137,7 @@ class AttrAction(BaseAction):
             print("context为空")
             return
 
+        print(await context.inner_html())
         c = await context.get_attribute(self._name)
         await self.run_child(c)
 
@@ -258,7 +262,7 @@ class JSScriptAction(BaseAction):
     >>> import asyncio
     >>> import subprocess
     >>> from autospider import ActionTree
-    >>> subprocess.run(["echo", "window.navigator.language;", ">", "tmp.js"])  
+    >>> subprocess.run(["echo", "window.navigator.language;", ">", "tmp.js"])
     >>> async def main():
     ...     await ActionTree.factory_ymlstr(
     ... \"\"\"
@@ -273,8 +277,9 @@ class JSScriptAction(BaseAction):
     ... \"\"\"
     ...     ).start()
     >>> asyncio.run(main())
-    >>> subprocess.run(["rm", "-rf", "tmp.js"]) 
+    >>> subprocess.run(["rm", "-rf", "tmp.js"])
     """
+
     def __init__(
         self, child_actions: List["IAction"], script: str = "", context_id: str = ""
     ) -> None:
